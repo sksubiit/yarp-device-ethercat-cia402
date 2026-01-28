@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD YARP 1.0//EN" "http://www.yarp.it/DTD/yarp_1_0.dtd">
+<devices>
+    <device name="motor_nws_ros2" type="controlBoard_nws_ros2">
+        <!-- The ROS 2 node name -->
+        <param name="node_name">template_1_motor_node</param>
+        <param name="msgs_name">template_1_motor_msgs</param>
+        
+        <!-- The name of the action server -->
+        <param name="topic_name">template_1_motor/joint_trajectory_controller</param>
+ 
+        <param name="period"> 0.010 </param>
+ 
+        <!-- Define the action group name -->
+        <!-- <param name="action_group1">follow_joint_trajectory</param> -->
+        
+        <!-- Enable action server for trajectory following -->
+        <!-- <param name="enable_actions">true</param> -->
+ 
+        <!-- List the joint names -->
+        <!-- <paramlist name="joints">
+            <elem name="joint1">joint1</elem>
+        </paramlist> -->
+ 
+        <!-- Attach to the actual YARP device -->
+        <action phase="startup" level="5" type="attach">
+            <param name="device">all_joints_mc</param>
+        </action>
+ 
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+</devices>
+ 

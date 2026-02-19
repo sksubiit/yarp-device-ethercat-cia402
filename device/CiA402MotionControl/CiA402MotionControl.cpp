@@ -1164,21 +1164,12 @@ struct CiA402MotionControl::Impl
                         setPoints.ppIsRelative[j] = false;
                     }
 
-<<<<<<< HEAD
                     // Populate 0x607A with the cached target (seeded or user provided). The
                     // rising edge on bit4 will be generated in the next cycle.
                     const int32_t driveTargetCounts = this->invertedMotionSenseDirection[j]
                                                           ? -setPoints.ppTargetCounts[j]
                                                           : setPoints.ppTargetCounts[j];
                     rx->TargetPosition = driveTargetCounts;
-=======
-                    // sync drive position (0x6064) to current position
-                    rx->TargetPosition = seedDriveCounts;
-
-                        setPoints.ppTargetCounts[j] = seedStoreCounts;
-                        setPoints.ppJointTargetsDeg[j] = currentJointDeg;
-                        setPoints.ppIsRelative[j] = false;
->>>>>>> d5d2038 (debug statement and some wrapper config, important is the period change for position)
 
                     // If no user set-point was pending, schedule a one-shot bit4 pulse to align
                     // the drive target to the current position.

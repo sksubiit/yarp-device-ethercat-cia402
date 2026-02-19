@@ -18,9 +18,9 @@
         <!-- <param name="enable_actions">true</param> -->
  
         <!-- List the joint names -->
-        <!-- <paramlist name="joints">
+        <paramlist name="joints">
             <elem name="joint1">joint1</elem>
-        </paramlist> -->
+        </paramlist>
  
         <!-- Attach to the actual YARP device -->
         <action phase="startup" level="5" type="attach">
@@ -30,4 +30,3 @@
         <action phase="shutdown" level="5" type="detach" />
     </device>
 </devices>
- 

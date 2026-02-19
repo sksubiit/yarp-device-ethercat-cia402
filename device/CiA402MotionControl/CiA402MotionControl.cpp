@@ -1164,12 +1164,21 @@ struct CiA402MotionControl::Impl
                         setPoints.ppIsRelative[j] = false;
                     }
 
+<<<<<<< HEAD
                     // Populate 0x607A with the cached target (seeded or user provided). The
                     // rising edge on bit4 will be generated in the next cycle.
                     const int32_t driveTargetCounts = this->invertedMotionSenseDirection[j]
                                                           ? -setPoints.ppTargetCounts[j]
                                                           : setPoints.ppTargetCounts[j];
                     rx->TargetPosition = driveTargetCounts;
+=======
+                    // sync drive position (0x6064) to current position
+                    rx->TargetPosition = seedDriveCounts;
+
+                        setPoints.ppTargetCounts[j] = seedStoreCounts;
+                        setPoints.ppJointTargetsDeg[j] = currentJointDeg;
+                        setPoints.ppIsRelative[j] = false;
+>>>>>>> d5d2038 (debug statement and some wrapper config, important is the period change for position)
 
                     // If no user set-point was pending, schedule a one-shot bit4 pulse to align
                     // the drive target to the current position.
@@ -3612,6 +3621,8 @@ bool CiA402MotionControl::getRefTorques(double* t)
 
 bool CiA402MotionControl::setRefTorque(int j, double t)
 {
+    //debug log
+    yCInfo(CIA402, "CiA402: Received setRefTorque(%d, %.2f)", j, t);
     if (j >= static_cast<int>(m_impl->numAxes))
     {
         yCError(CIA402, "%s: joint %d out of range", Impl::kClassName.data(), j);
@@ -3748,6 +3759,7 @@ bool CiA402MotionControl::getTorqueRanges(double* min, double* max)
 
 bool CiA402MotionControl::velocityMove(int j, double spd)
 {
+    yCInfo(CIA402, "CiA402: Received velocityMove(%d, %.2f)", j, spd);
     if (j >= static_cast<int>(m_impl->numAxes))
     {
         yCError(CIA402, "%s: joint %d out of range", Impl::kClassName.data(), j);
@@ -4242,6 +4254,9 @@ bool CiA402MotionControl::getLastJointFault(int j, int& fault, std::string& mess
 
 bool CiA402MotionControl::positionMove(int j, double refDeg)
 {
+    // Debug log for RPC / command tracing
+    yCInfo(CIA402, "CiA402: Received positionMove(%d, %.2f)", j, refDeg);
+
     if (j < 0 || j >= static_cast<int>(m_impl->numAxes))
     {
         yCError(CIA402, "%s: positionMove: joint %d out of range", Impl::kClassName.data(), j);
@@ -4344,6 +4359,7 @@ bool CiA402MotionControl::positionMove(const int n, const int* joints, const dou
 
 bool CiA402MotionControl::relativeMove(int j, double deltaDeg)
 {
+    yCInfo(CIA402, "CiA402: Received relativeMove(%d, %.2f)", j, deltaDeg);
     if (j < 0 || j >= static_cast<int>(m_impl->numAxes))
         return false;
     {
@@ -4610,6 +4626,7 @@ bool CiA402MotionControl::getTargetPositions(const int n, const int* joints, dou
 
 bool CiA402MotionControl::setPosition(int j, double refDeg)
 {
+    yCInfo(CIA402, "CiA402: Received setPosition(%d, %.2f)", j, refDeg);
     if (j < 0 || j >= static_cast<int>(m_impl->numAxes))
     {
         yCError(CIA402, "%s: setPosition: joint %d out of range", Impl::kClassName.data(), j);
@@ -4962,6 +4979,7 @@ bool CiA402MotionControl::setRefCurrents(const double* currs)
 
 bool CiA402MotionControl::setRefCurrent(int m, double curr)
 {
+    yCInfo(CIA402, "CiA402: Received setRefCurrent(%d, %.2f)", m, curr);
     if (m < 0 || m >= static_cast<int>(m_impl->numAxes))
     {
         yCError(CIA402, "%s: setRefCurrent: motor %d out of range", Impl::kClassName.data(), m);

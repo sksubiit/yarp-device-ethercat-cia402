@@ -2,13 +2,13 @@
 This software may be modified and distributed under the terms of the
 BSD-3-Clause license. -->
 <?xml version="1.0" encoding="UTF-8" ?>
-<device xmlns:xi="http://www.w3.org/2001/XInclude" name="all_joints_mc" type="CiA402MotionControl">
-    <param name="ifname">"enx08beac363dca"</param>
+<device xmlns:xi="http://www.w3.org/2001/XInclude" name="joint2_hw" type="CiA402MotionControl">
+    <param name="ifname">"enx503f560039d2"</param>
     <param name="num_axes">1</param>
     <param name="period">1e-3</param>
     <param name="pdo_timeout_us">10000</param>
     <param name="enable_dc">false</param>
-    <param name="axes_names">( "joint1" )</param>
+    <param name="axes_names">( "joint2" )</param>
     <param name="inverted_motion_sense_direction">( false )</param>
     <param name="enc1_mount">( "motor" )</param>
     <param name="enc2_mount">( "joint" )</param>
@@ -22,4 +22,3 @@ BSD-3-Clause license. -->
     <param name="pos_limit_max_deg">               (         180.0       )</param>
     <param name="use_position_limits_from_config"> (         true      )</param>
 </device>
- 

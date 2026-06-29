@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD YARP 1.0//EN" "http://www.yarp.it/DTD/yarp_1_0.dtd">
+<devices>
+    <device name="motor_nws_ros2" type="controlBoard_nws_ros2">
+        <param name="node_name">template_2_motor_d2d_node</param>
+        <param name="msgs_name">template_2_motor_d2d_msgs</param>
+        <param name="topic_name">template_2_motor_d2d/joint_trajectory_controller</param>
+        <param name="period">0.010</param>
+
+        <paramlist name="joints">
+            <elem name="joint1">joint1</elem>
+            <elem name="joint2">joint2</elem>
+        </paramlist>
+
+        <action phase="startup" level="10" type="attach">
+            <param name="device">all_joints_mc</param>
+        </action>
+        <action phase="shutdown" level="10" type="detach" />
+    </device>
+</devices>

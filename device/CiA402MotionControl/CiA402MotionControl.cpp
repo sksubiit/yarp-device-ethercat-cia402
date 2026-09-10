@@ -116,6 +116,8 @@ struct CiA402MotionControl::Impl
     {
         std::vector<double> maxPositionLimitDeg; // [deg] from 0x607D:1
         std::vector<double> minPositionLimitDeg; // [deg] from 0x607D:2
+        std::vector<double> minVelocityLimitDegS; // [deg/s] reported through IControlLimits
+        std::vector<double> maxVelocityLimitDegS; // [deg/s] reported through IControlLimits
         std::vector<bool> usePositionLimitsFromConfig; // if false, read 0x607D from SDO and cache
                                                        // here
         std::mutex mutex; // protects *all* the above vectors
@@ -2544,6 +2546,55 @@ bool CiA402MotionControl::open(yarp::os::Searchable& cfg)
 
             m_impl->limits.minPositionLimitDeg[j] = minDeg;
             m_impl->limits.maxPositionLimitDeg[j] = maxDeg;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Read velocity limits used by IControlLimits / yarpmotorgui.
+    // These are host-side reporting limits. They do not program a drive SDO.
+    // ---------------------------------------------------------------------
+    const bool hasMinVelocityLimits = cfg.check("vel_limit_min_deg_s");
+    const bool hasMaxVelocityLimits = cfg.check("vel_limit_max_deg_s");
+    if (hasMinVelocityLimits != hasMaxVelocityLimits)
+    {
+        yCError(CIA402,
+                "%s vel_limit_min_deg_s and vel_limit_max_deg_s must be provided together",
+                logPrefix);
+        return false;
+    }
+
+    if (hasMinVelocityLimits)
+    {
+        if (!extractListOfDoubleFromSearchable(cfg,
+                                               "vel_limit_min_deg_s",
+                                               m_impl->limits.minVelocityLimitDegS)
+            || !extractListOfDoubleFromSearchable(cfg,
+                                                   "vel_limit_max_deg_s",
+                                                   m_impl->limits.maxVelocityLimitDegS))
+        {
+            yCError(CIA402, "%s failed to parse velocity limits", logPrefix);
+            return false;
+        }
+    }
+    else
+    {
+        // Preserve the historic yarpmotorgui range for configurations that
+        // predate the optional velocity-limit parameters.
+        m_impl->limits.minVelocityLimitDegS.assign(m_impl->numAxes, -100.0);
+        m_impl->limits.maxVelocityLimitDegS.assign(m_impl->numAxes, 100.0);
+    }
+
+    for (size_t j = 0; j < m_impl->numAxes; ++j)
+    {
+        if (m_impl->limits.minVelocityLimitDegS[j] >= m_impl->limits.maxVelocityLimitDegS[j])
+        {
+            yCError(CIA402,
+                    "%s j=%zu invalid velocity limits [min=%g, max=%g]",
+                    logPrefix,
+                    j,
+                    m_impl->limits.minVelocityLimitDegS[j],
+                    m_impl->limits.maxVelocityLimitDegS[j]);
+            return false;
         }
     }
 
@@ -5163,10 +5214,21 @@ bool CiA402MotionControl::setVelLimits(int axis, double min, double max)
 
 bool CiA402MotionControl::getVelLimits(int axis, double* min, double* max)
 {
-    // not implemented yet
-    constexpr auto logPrefix = "[getVelLimits] ";
-    yCError(CIA402, "%s: The getVelLimits function is not implemented", logPrefix);
-    return false;
+    if (min == nullptr || max == nullptr)
+    {
+        yCError(CIA402, "%s: getVelLimits: null pointer", Impl::kClassName.data());
+        return false;
+    }
+    if (axis < 0 || axis >= static_cast<int>(m_impl->numAxes))
+    {
+        yCError(CIA402, "%s: getVelLimits: axis %d out of range", Impl::kClassName.data(), axis);
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_impl->limits.mutex);
+    *min = m_impl->limits.minVelocityLimitDegS[axis];
+    *max = m_impl->limits.maxVelocityLimitDegS[axis];
+    return true;
 }
 
 bool CiA402MotionControl::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)

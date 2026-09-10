@@ -33,7 +33,7 @@ BSD-3-Clause license. -->
          Very large degree limits can saturate the int32 encoder-count range used by SDO 0x607D. -->
     <param name="pos_limit_min_deg">( -180.0 -180.0 )</param>
     <param name="pos_limit_max_deg">( 180.0 180.0 )</param>
-    <param name="vel_limit_min_deg_s">( -500.0 -100.0 )</param>
-    <param name="vel_limit_max_deg_s">( 500.0 100.0 )</param>
+    <param name="vel_limit_min_deg_s">( -2000.0 -500.0 )</param>
+    <param name="vel_limit_max_deg_s">( 2000.0 500.0 )</param>
     <param name="use_position_limits_from_config">( false false )</param>
 </device>

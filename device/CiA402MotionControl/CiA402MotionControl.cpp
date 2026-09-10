@@ -10,7 +10,7 @@
 // YARP
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
-#include <yarp/os/Time.h>
+// #include <yarp/os/Time.h>
 
 // STD
 #include <algorithm>
@@ -1520,9 +1520,33 @@ struct CiA402MotionControl::Impl
                                          ? tx.get<uint8_t>(CiA402::TxField::SBC_6621_02)
                                          : 0; // Safe Brake Control status
 
-            // --------- Timestamp ----------
-            this->variables.feedbackTime[j] = yarp::os::Time::now();
+            // --------- Timestamp  (if available) ----------
+            // Provides drive-side timing information for synchronization
+            if (tx.has(CiA402::TxField::Timestamp20F0))
+            {
+                const uint32_t raw = tx.get<uint32_t>(CiA402::TxField::Timestamp20F0, 0);
+                // Unwrap 32-bit microsecond counter with threshold to avoid false wraps
+                // due to small, non-monotonic clock adjustments.
+                // Consider a wrap only if the backward jump is larger than half the range.
+                if (raw < this->tsLastRaw[j])
+                {
+                    const uint32_t back = this->tsLastRaw[j] - raw;
+                    if (back > TIMESTAMP_WRAP_HALF_RANGE)
+                    {
+                        this->tsWraps[j] += 1u;
+                    }
+                    // else: small backward step → no wraps increment
+                }
+                this->tsLastRaw[j] = raw;
 
+                const uint64_t us_ext
+                    = this->tsWraps[j] * TIMESTAMP_WRAP_PERIOD_US + static_cast<uint64_t>(raw);
+                this->variables.feedbackTime[j]
+                    = static_cast<double>(us_ext) * MICROSECONDS_TO_SECONDS;
+            } else
+            {
+                this->variables.feedbackTime[j] = 0.0;
+            }
             // the temperature is given in mC we need to convert Celsius
             this->variables.driveTemperatures[j]
                 = tx.has(CiA402::TxField::TemperatureDrive)

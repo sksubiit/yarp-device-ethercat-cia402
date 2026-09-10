@@ -8,8 +8,8 @@
         <param name="period">0.010</param>
 
         <paramlist name="joints">
-            <elem name="joint1">joint1</elem>
-            <elem name="joint2">joint2</elem>
+            <elem name="traction">traction</elem>
+            <elem name="steering">steering</elem>
         </paramlist>
 
         <action phase="startup" level="10" type="attach">

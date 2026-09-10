@@ -1251,7 +1251,8 @@ public:
      * @param min Minimum velocity limit (in joint units per second, e.g., degrees/s).
      * @param max Maximum velocity limit (in joint units per second, e.g., degrees/s).
      * @return true if the limits were successfully set, false otherwise.
-     * @note The velocity limits is not implemented in this driver, so it always returns false.
+     * @note Runtime updates are not supported. The configured limits are read-only and are
+     * reported by getVelLimits().
      */
     bool setVelLimits(int axis, double min, double max) override;
 
@@ -1266,7 +1267,8 @@ public:
      * @param max Pointer to store the maximum velocity limit (in joint units per second, e.g.,
      * degrees/s).
      * @return true if the limits were successfully retrieved, false otherwise.
-     * @note The velocity limits is not implemented in this driver, so it always returns false.
+     * @note Values come from the optional vel_limit_min_deg_s and vel_limit_max_deg_s
+     * configuration lists, expressed in degrees per second.
      */
     bool getVelLimits(int axis, double* min, double* max) override;
 

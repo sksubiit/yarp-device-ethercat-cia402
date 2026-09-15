@@ -1244,9 +1244,7 @@ public:
     /**
      * @brief Sets the velocity limits for a specific axis.
      *
-     * This function sets the minimum and maximum velocity limits for the specified axis.
-     * The limits are enforced by the device to prevent motion beyond the defined range.
-     *
+     * This function sets the minimum and maximum velocity limits for the specified axis.     *
      * @param axis Index of the axis (0-based).
      * @param min Minimum velocity limit (in joint units per second, e.g., degrees/s).
      * @param max Maximum velocity limit (in joint units per second, e.g., degrees/s).

@@ -2967,7 +2967,7 @@ void CiA402MotionControl::run()
             {
                 if (m_impl->controlModeState.faultResetPending[j])
                 {
-                    // Pulse Controlword bit 7 once, then return to IDLE so a later fidl
+                    // Pulse Controlword bit 7 once, then return to IDLE so a later FORCE_IDLE
                     // request creates a new rising edge instead of holding reset asserted.
                     const auto cmd = m_impl->sm[j]->faultReset(); // CW=0x0080
                     rx->Controlword = cmd.controlword;

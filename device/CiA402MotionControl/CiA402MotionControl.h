@@ -1244,7 +1244,8 @@ public:
     /**
      * @brief Sets the velocity limits for a specific axis.
      *
-     * This function sets the minimum and maximum velocity limits for the specified axis.     *
+     * Runtime updates of velocity limits are not supported.
+     *
      * @param axis Index of the axis (0-based).
      * @param min Minimum velocity limit (in joint units per second, e.g., degrees/s).
      * @param max Maximum velocity limit (in joint units per second, e.g., degrees/s).
@@ -1266,7 +1267,9 @@ public:
      * degrees/s).
      * @return true if the limits were successfully retrieved, false otherwise.
      * @note Values come from the optional vel_limit_min_deg_s and vel_limit_max_deg_s
-     * configuration lists, expressed in degrees per second.
+     * configuration lists, expressed in joint-side degrees per second. If both lists are
+     * omitted, returns false without modifying the output values. These limits are reported
+     * to clients only; they are not enforced on velocity commands or written to the drive.
      */
     bool getVelLimits(int axis, double* min, double* max) override;
 

@@ -2682,13 +2682,11 @@ bool CiA402MotionControl::open(yarp::os::Searchable& cfg)
     }
     else
     {
-        // Preserve the historic yarpmotorgui range for configurations that
-        // predate the optional velocity-limit parameters.
-        m_impl->limits.minVelocityLimitDegS.assign(m_impl->numAxes, -100.0);
-        m_impl->limits.maxVelocityLimitDegS.assign(m_impl->numAxes, 100.0);
+        m_impl->limits.minVelocityLimitDegS.clear();
+        m_impl->limits.maxVelocityLimitDegS.clear();
     }
 
-    for (size_t j = 0; j < m_impl->numAxes; ++j)
+    for (size_t j = 0; j < m_impl->limits.minVelocityLimitDegS.size(); ++j)
     {
         if (m_impl->limits.minVelocityLimitDegS[j] >= m_impl->limits.maxVelocityLimitDegS[j])
         {

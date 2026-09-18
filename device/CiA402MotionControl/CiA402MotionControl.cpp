@@ -5334,6 +5334,11 @@ bool CiA402MotionControl::getVelLimits(int axis, double* min, double* max)
     }
 
     std::lock_guard<std::mutex> lock(m_impl->limits.mutex);
+    if (m_impl->limits.minVelocityLimitDegS.empty()
+        || m_impl->limits.maxVelocityLimitDegS.empty())
+    {
+        return false;
+    }
     *min = m_impl->limits.minVelocityLimitDegS[axis];
     *max = m_impl->limits.maxVelocityLimitDegS[axis];
     return true;
